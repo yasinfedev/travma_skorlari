@@ -44,7 +44,6 @@
                 <input type="number" id="speech" class="form-control" min="0" max="2" required>
             </div>
             <button type="submit" class="btn btn-primary">Skorları Hesapla</button>
-            <button type="reset" class="btn btn-secondary" id="resetBtn">Sıfırla</button>
         </form>
         <div id="result" class="mt-5">
             <!-- Sonuçlar burada görüntülenecek -->
@@ -70,41 +69,65 @@
             let prehospitalIndex = calculatePrehospitalIndex(respiration, motor, arterialPressure);
             let startScore = calculateStart(gcs, motor, speech);
 
-            // Sonuçları göster
+            // Sonuçları ve yorumları göster
             document.getElementById('result').innerHTML = `
                 <h3>Sonuçlar:</h3>
-                <p><strong>CRAMS Skoru:</strong> ${cramsScore}</p>
-                <p><strong>MGAP Skoru:</strong> ${mgapScore}</p>
-                <p><strong>Revize Travma Skoru (RTS):</strong> ${revisedTraumaScore}</p>
-                <p><strong>Hastane Öncesi İndeks (PHI):</strong> ${prehospitalIndex}</p>
-                <p><strong>START Skoru:</strong> ${startScore}</p>
+                <p><strong>CRAMS Skoru:</strong> ${cramsScore} - ${interpretCrams(cramsScore)}</p>
+                <p><strong>MGAP Skoru:</strong> ${mgapScore} - ${interpretMgap(mgapScore)}</p>
+                <p><strong>Revize Travma Skoru (RTS):</strong> ${revisedTraumaScore} - ${interpretRevisedTrauma(revisedTraumaScore)}</p>
+                <p><strong>Hastane Öncesi İndeks (PHI):</strong> ${prehospitalIndex} - ${interpretPrehospitalIndex(prehospitalIndex)}</p>
+                <p><strong>START Skoru:</strong> ${startScore} - ${interpretStart(startScore)}</p>
             `;
         });
 
         function calculateCrams(respiration, motor, speech) {
-            // CRAMS skoru hesaplama: Solunum, motor, konuşma
-            return respiration + motor + speech; // Basit hesaplama örneği
+            return respiration + motor + speech; 
         }
 
         function calculateMgap(gcs, age, arterialPressure) {
-            // MGAP skoru: GCS, yaş, arteryel tansiyon
             let ageScore = age > 60 ? 5 : 0;
-            return gcs + ageScore + arterialPressure; // Örnek hesaplama
+            return gcs + ageScore + arterialPressure; 
         }
 
         function calculateRevisedTrauma(gcs, respiration, arterialPressure) {
-            // Revize Travma Skoru (RTS) hesaplama: GCS, Solunum, Tansiyon
-            return gcs + respiration + arterialPressure; // Örnek hesaplama
+            return gcs + respiration + arterialPressure; 
         }
 
         function calculatePrehospitalIndex(respiration, motor, arterialPressure) {
-            // Hastane Öncesi İndeks hesaplama
-            return (respiration * motor) / arterialPressure; // Örnek hesaplama
+            return (respiration * motor) / arterialPressure; 
         }
 
         function calculateStart(gcs, motor, speech) {
-            // START Skoru hesaplama
-            return gcs + motor + speech; // Örnek hesaplama
+            return gcs + motor + speech; 
+        }
+
+        // Yorum fonksiyonları
+        function interpretCrams(score) {
+            if (score >= 8) return "İyi durumda.";
+            else if (score >= 4) return "Orta derecede travma.";
+            else return "Ağır travma.";
+        }
+
+        function interpretMgap(score) {
+            if (score >= 23) return "Düşük mortalite riski.";
+            else if (score >= 18) return "Orta mortalite riski.";
+            else return "Yüksek mortalite riski.";
+        }
+
+        function interpretRevisedTrauma(score) {
+            if (score >= 10) return "Minimal yaralanma.";
+            else if (score >= 7) return "Orta derecede yaralanma.";
+            else return "Ciddi yaralanma.";
+        }
+
+        function interpretPrehospitalIndex(score) {
+            if (score > 1) return "Düşük risk.";
+            else return "Yüksek risk.";
+        }
+
+        function interpretStart(score) {
+            if (score >= 8) return "Hastanın durumu stabil.";
+            else return "Kritik müdahale gerektirir.";
         }
     </script>
 </body>
